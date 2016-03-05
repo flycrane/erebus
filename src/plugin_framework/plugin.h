@@ -41,7 +41,7 @@ extern "C" {
 
         typedef uint32_t (*ExitPluginFunc)();
 
-        typedef ExitPlugin (*InitPluginFunc)(const PlatformServices*);
+        typedef ExitPluginFunc (*InitPluginFunc)(const PlatformServices*);
 
         ExitPluginFunc initPlugin(const PlatformServices* params);
 
