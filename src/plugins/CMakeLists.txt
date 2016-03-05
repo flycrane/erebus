@@ -1,3 +1,5 @@
+set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/plugins)
+
 add_subdirectory(capstone)
 
 set(SOURCE
@@ -8,4 +10,4 @@ set(SOURCE
 set(HEADER
 	${HEADER}
 	PARENT_SCOPE
-)	
+)

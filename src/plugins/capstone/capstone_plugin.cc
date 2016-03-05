@@ -3,12 +3,11 @@
 #include <stdint.h>
 
 #include "plugin_framework/plugin.h"
-/*
-extern "C" uint32_t ExitPluginFunc() {
+
+extern "C" uint32_t Exit() {
         return 0;
 }
 
-extern "C" ExitPluginFunc(const PlatformServices* params) {
-
-        return ExitPluginFunc;
-}*/
+extern "C" ExitPluginFunc initPlugin(const PlatformServices* params) {
+        return Exit;
+}
