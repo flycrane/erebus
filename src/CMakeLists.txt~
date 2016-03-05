@@ -1,0 +1,14 @@
+set(SOURCE
+	${SOURCE}
+	${CMAKE_CURRENT_SOURCE_DIR}/main.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/console_application.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/gui_application.cc
+	PARENT_SCOPE
+)
+
+set(HEADER
+	${HEADER}
+	${CMAKE_CURRENT_SOURCE_DIR}/console_application.h
+	${CMAKE_CURRENT_SOURCE_DIR}/gui_application.h
+	PARENT_SCOPE
+)	
