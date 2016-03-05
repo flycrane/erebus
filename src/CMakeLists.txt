@@ -1,3 +1,5 @@
+add_subdirectory(plugin_framework)
+
 set(SOURCE
 	${SOURCE}
 	${CMAKE_CURRENT_SOURCE_DIR}/main.cc

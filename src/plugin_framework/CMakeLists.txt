@@ -1,0 +1,12 @@
+set(SOURCE
+	${SOURCE}
+	${CMAKE_CURRENT_SOURCE_DIR}/plugin_manager.cc
+	PARENT_SCOPE
+)
+
+set(HEADER
+	${HEADER}
+	${CMAKE_CURRENT_SOURCE_DIR}/plugin_manager.h
+	${CMAKE_CURRENT_SOURCE_DIR}/plugin.h
+	PARENT_SCOPE
+)	
