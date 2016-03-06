@@ -8,16 +8,16 @@
 #include "path.h"
 #include "directory.h"
 
-static bool isValid(const uint8_t* objectType, const RegisterParams* params) {
+static bool isValid(const char* objectType, const RegisterParameters* params) {
         if(!objectType || !(*objectType))
                 return false;
-        if(!params || !params->createFunction || !params->destroyFunction)
+        if(!params || !params->createObjectFunction || !params->destroyObjectFunction)
                 return false;
         return true;
 }
 
-int32_t PluginManager::registerObject(const uint8_t* objectType,
-                                       const RegisterParams* params) {
+int32_t PluginManager::registerObject(const char* objectType,
+                                       const RegisterParameters* params) {
         if(!isValid(objectType,params))
                 return -1;
 
@@ -61,8 +61,8 @@ PluginManager& PluginManager::getInstance() {
 PluginManager::PluginManager() : initializePlugin_(false) {
         platformServices_.version.major=1;
         platformServices_.version.minor=0;
-        platformServices_.invokeService = NULL;
-        platformServices_.registerObject = registerObject;
+        platformServices_.invokeServiceFunction = NULL;
+        platformServices_.registerObjectFunction = registerObject;
 }
 
 PluginManager::~PluginManager() {
@@ -88,10 +88,10 @@ int32_t PluginManager::shutdown() {
         return result;
 }
 
-int32_t PluginManager::initializePlugin(InitPluginFunc initFunc) {
+int32_t PluginManager::initializePlugin(InitPlugin initFunc) {
         PluginManager& pm=getInstance();
 
-        ExitPluginFunc exitFunc = initFunc(&pm.platformServices_);
+        ExitPlugin exitFunc = initFunc(&pm.platformServices_);
         if(!exitFunc)
                 return -1;
 
@@ -99,11 +99,11 @@ int32_t PluginManager::initializePlugin(InitPluginFunc initFunc) {
         return 0;
 }
 
-int32_t PluginManager::loadAll(const std::string& pluginDirectory, InvokeServiceFunc func) {
+int32_t PluginManager::loadAll(const std::string& pluginDirectory, InvokeService func) {
         if(pluginDirectory.empty())
                 return -1;
 
-        platformServices_.invokeService = func;
+        platformServices_.invokeServiceFunction = func;
 
         Path dir_path(pluginDirectory);
         if(!dir_path.exists() || !dir_path.isDirectory())
@@ -141,7 +141,7 @@ uint32_t PluginManager::loadByPath(const std::string& pluginPath) {
         if(!d)
                 return -1;
 
-        InitPluginFunc initFunc = (InitPluginFunc)(d->getSymbol("initPlugin"));
+        InitPlugin initFunc = (InitPlugin)(d->getSymbol("initPlugin"));
         if(!initFunc)
                 return -1;
 
@@ -156,31 +156,31 @@ void* PluginManager::createObject(const std::string& objectType, IObjectAdapter&
         if(objectType == std::string("*"))
                         return NULL;
 
-        ObjectParams np;
-        np.objectType = (const uint8_t*)objectType.c_str();
+        ObjectParameters np;
+        np.objectType = (const char*)objectType.c_str();
         np.platformServices = &platformServices_;
 
         if(exactMatchMap_.find(objectType) != exactMatchMap_.end()) {
-                RegisterParams& rp = exactMatchMap_[objectType];
-                void* object = rp.createFunction(&np);
+                RegisterParameters& rp = exactMatchMap_[objectType];
+                void* object = rp.createObjectFunction(&np);
                 if(object) {
                         if(rp.programmingLanguage == ProgrammingLanguage_C)
-                                object = adapter.adapt(object, rp.destroyFunction);
+                                object = adapter.adapt(object, rp.destroyObjectFunction);
 
                         return object;
                 }
         }
 
         for(std::size_t i=0; i<wildCardVec_.size();i++) {
-                RegisterParams& rp = wildCardVec_[i];
-                void* object = rp.createFunction(&np);
+                RegisterParameters& rp = wildCardVec_[i];
+                void* object = rp.createObjectFunction(&np);
                 if(object) {
                         if(rp.programmingLanguage==ProgrammingLanguage_C)
-                                object=adapter.adapt(object, rp.destroyFunction);
+                                object=adapter.adapt(object, rp.destroyObjectFunction);
 
                         int32_t res= registerObject(np.objectType, &rp);
                         if(res<0) {
-                                rp.destroyFunction(object);
+                                rp.destroyObjectFunction(object);
                                 return NULL;
                         }
                         return object;

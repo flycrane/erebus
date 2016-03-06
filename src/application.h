@@ -3,11 +3,11 @@
 namespace erebus {
 
 class Application {
-public:
-     Application();
-     ~Application();
+  public:
+	Application();
+	~Application();
 
-private:
+  private:
 
 };
 

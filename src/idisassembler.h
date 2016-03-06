@@ -3,8 +3,8 @@
 #include "byte_order.h"
 
 struct IDisassembler {
-        public:
-                virtual ~IDisassembler();
+  public:
+	virtual ~IDisassembler();
 
-                virtual void setByteOrder(ByteOrder byteOrder);
+	virtual void setByteOrder(ByteOrder byteOrder);
 };

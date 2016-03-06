@@ -3,18 +3,18 @@
 #include <string>
 
 class DynamicLibrary {
-        public:
-                static DynamicLibrary* load(const std::string& path, std::string& errorString);
+  public:
+	static DynamicLibrary* load(const std::string& path, std::string& errorString);
 
-                ~DynamicLibrary();
+	~DynamicLibrary();
 
-                void* getSymbol(const std::string& name);
+	void* getSymbol(const std::string& name);
 
-        private:
-                DynamicLibrary();
-                DynamicLibrary(void* handle);
-                DynamicLibrary(const DynamicLibrary&);
+  private:
+	DynamicLibrary();
+	DynamicLibrary(void* handle);
+	DynamicLibrary(const DynamicLibrary&);
 
-                void* handle_;
+	void* handle_;
 
 };

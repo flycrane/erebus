@@ -5,25 +5,25 @@
 #include "path.h"
 
 namespace Directory {
-        
 
-        struct Entry {
-                enum Type {
-                        FILE,
-                        DIRECTORY,
-                        LINK
-                };
 
-                Type type;
-                std::string path;
-        };
+struct Entry {
+	enum Type {
+		FILE,
+		DIRECTORY,
+		LINK
+	};
 
-        class Iterator {
-                public:
-                        Iterator(const Path& path);
-                        Iterator(const std::string& path);
-                        ~Iterator();
+	Type type;
+	std::string path;
+};
 
-                        Entry* next(Entry& e);
-        };
+class Iterator {
+  public:
+	Iterator(const Path& path);
+	Iterator(const std::string& path);
+	~Iterator();
+
+	Entry* next(Entry& e);
+};
 }

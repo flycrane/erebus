@@ -4,10 +4,10 @@
 
 #include "plugin_framework/plugin.h"
 
-extern "C" uint32_t Exit() {
+extern "C" int32_t Exit() {
         return 0;
 }
 
-extern "C" ExitPluginFunc initPlugin(const PlatformServices* params) {
+extern "C" ExitPlugin initPlugin(const PlatformServices* params) {
         return Exit;
 }
