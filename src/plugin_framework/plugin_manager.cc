@@ -3,10 +3,10 @@
 #include <string>
 #include <stdint.h>
 
-#include "plugin_framework/dynamic_library.h"
+#include "utils/file_utils/dynamic_library.h"
 #include "plugin_framework/plugin.h"
-#include "path.h"
-#include "directory.h"
+#include "utils/file_utils/path.h"
+#include "utils/file_utils/directory.h"
 
 static bool isValid(const char* objectType, const RegisterParameters* params) {
         if(!objectType || !(*objectType))

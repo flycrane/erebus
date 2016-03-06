@@ -6,7 +6,7 @@
 #include <map>
 #include <memory>
 
-#include "plugin_framework/dynamic_library.h"
+#include "utils/file_utils/dynamic_library.h"
 #include "plugin_framework/plugin.h"
 #include "plugin_framework/iobject_adapter.h"
 

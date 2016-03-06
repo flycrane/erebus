@@ -1,0 +1,15 @@
+set(SOURCE
+	${SOURCE}
+	${CMAKE_CURRENT_SOURCE_DIR}/dynamic_library.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/directory.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/path.cc
+	PARENT_SCOPE
+)
+
+set(HEADER
+	${HEADER}
+	${CMAKE_CURRENT_SOURCE_DIR}/dynamic_library.h
+	${CMAKE_CURRENT_SOURCE_DIR}/path.h
+	${CMAKE_CURRENT_SOURCE_DIR}/directory.h
+	PARENT_SCOPE
+)	

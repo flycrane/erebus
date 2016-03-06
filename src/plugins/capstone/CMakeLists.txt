@@ -1,4 +1,4 @@
-#include_directories(../../)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CAPSTONE_PLUGIN_SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/capstone_plugin.cc
