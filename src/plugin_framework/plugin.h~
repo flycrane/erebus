@@ -12,7 +12,7 @@ extern "C" {
 
         typedef struct ObjectParams {
                 const uint8_t* objectType;
-                const struct PlatformServices* platformServices;
+                const struct Platformservices* platformServices;
         } ObjectParams;
 
         typedef struct PluginApiVersion {
