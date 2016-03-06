@@ -45,9 +45,7 @@ class PluginManager {
 	ExitFuncVec exitFuncVec_;
 
 	RegistrationMap tempExactMatchMap_;
-	RegistrationVec tempWidcardVec_;
 
 	RegistrationMap exactMatchMap_;
-	RegistrationVec wildCardVec_;
 };
 

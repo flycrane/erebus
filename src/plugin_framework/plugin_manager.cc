@@ -28,10 +28,6 @@ int32_t PluginManager::registerObject(const char* objectType,
                 return -1;
 
         std::string key((const char*)objectType);
-        if(key == std::string("*")) {
-                pm.wildCardVec_.push_back(*params);
-                return 0;
-        }
 
         if(pm.exactMatchMap_.find(key) != pm.exactMatchMap_.end()) {
                 return -1;
@@ -82,7 +78,6 @@ int32_t PluginManager::shutdown() {
 
         dynamicLibraryMap_.clear();
         exactMatchMap_.clear();
-        wildCardVec_.clear();
         exitFuncVec_.clear();
 
         return result;
@@ -167,22 +162,6 @@ void* PluginManager::createObject(const std::string& objectType, IObjectAdapter&
                         if(rp.programmingLanguage == ProgrammingLanguage_C)
                                 object = adapter.adapt(object, rp.destroyObjectFunction);
 
-                        return object;
-                }
-        }
-
-        for(std::size_t i=0; i<wildCardVec_.size();i++) {
-                RegisterParameters& rp = wildCardVec_[i];
-                void* object = rp.createObjectFunction(&np);
-                if(object) {
-                        if(rp.programmingLanguage==ProgrammingLanguage_C)
-                                object=adapter.adapt(object, rp.destroyObjectFunction);
-
-                        int32_t res= registerObject(np.objectType, &rp);
-                        if(res<0) {
-                                rp.destroyObjectFunction(object);
-                                return NULL;
-                        }
                         return object;
                 }
         }
