@@ -104,18 +104,18 @@ int32_t PluginManager::loadAll(const std::string& pluginDirectory, InvokeService
         if(!dir_path.exists() || !dir_path.isDirectory())
                 return -1;
 
-        Directory::Entry e;
-        Directory::Iterator di(dir_path);
-        while(di.next(e)) {
-                Path full_path(dir_path+Path(e.path));
+        //Directory::Entry e;
+        //Directory::Iterator di(dir_path);
+        //while(di.next(e)) {
+        //        Path full_path(dir_path+Path(e.path));
 
-                if(full_path.isDirectory())
-                        continue;
+        //        if(full_path.isDirectory())
+        //                continue;
 
-                std::string ext = full_path.getExtension();
-                if(ext != ".so")
-                        continue;
-        }
+        //        std::string ext = full_path.getExtension();
+        //        if(ext != ".so")
+        //                continue;
+        //}
         return 0;
 }
 

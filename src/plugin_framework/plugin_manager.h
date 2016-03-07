@@ -44,8 +44,6 @@ class PluginManager {
 	DynamicLibraryMap dynamicLibraryMap_;
 	ExitFuncVec exitFuncVec_;
 
-	RegistrationMap tempExactMatchMap_;
-
 	RegistrationMap exactMatchMap_;
 };
 

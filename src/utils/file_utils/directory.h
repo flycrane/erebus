@@ -1,29 +1,14 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include "utils/file_utils/path.h"
 
-namespace Directory {
+class DirectoryIterator;
 
-
-struct Entry {
-	enum Type {
-		FILE,
-		DIRECTORY,
-		LINK
-	};
-
-	Type type;
-	std::string path;
+class Directory {
+        public:
+                static std::unique_ptr<DirectoryIterator> iterator(const std::string& path);
+                static std::unique_ptr<DirectoryIterator> iterator(const Path& path);
 };
-
-class Iterator {
-  public:
-	Iterator(const Path& path);
-	Iterator(const std::string& path);
-	~Iterator();
-
-	Entry* next(Entry& e);
-};
-}

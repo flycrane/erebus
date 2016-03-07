@@ -1,21 +1,15 @@
 #include "utils/file_utils/directory.h"
 
-namespace Directory {
+#include <string>
+#include <memory>
 
-        Iterator::Iterator(const Path& path) {
+#include "utils/file_utils/path.h"
+#include "utils/file_utils/directory_iterator.h"
 
-        }
+std::unique_ptr<DirectoryIterator> Directory::iterator(const std::string& path) {
+        return std::make_unique<DirectoryIterator>(path);
+}
 
-        Iterator::Iterator(const std::string& path) {
-
-        }
-
-        Iterator::~Iterator() {
-
-        }
-
-        Entry* Iterator::next(Entry& e) {
-                return nullptr;
-        }
-
+std::unique_ptr<DirectoryIterator> Directory::iterator(const Path& path) {
+        return std::make_unique<DirectoryIterator>(path);
 }
