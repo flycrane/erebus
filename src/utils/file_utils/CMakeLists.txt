@@ -2,6 +2,7 @@ set(SOURCE
 	${SOURCE}
 	${CMAKE_CURRENT_SOURCE_DIR}/dynamic_library.cc
 	${CMAKE_CURRENT_SOURCE_DIR}/directory.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/file.cc
 	${CMAKE_CURRENT_SOURCE_DIR}/path.cc
 	${CMAKE_CURRENT_SOURCE_DIR}/directory_iterator.cc
 	PARENT_SCOPE
@@ -11,6 +12,7 @@ set(HEADER
 	${HEADER}
 	${CMAKE_CURRENT_SOURCE_DIR}/dynamic_library.h
 	${CMAKE_CURRENT_SOURCE_DIR}/path.h
+	${CMAKE_CURRENT_SOURCE_DIR}/file.h
 	${CMAKE_CURRENT_SOURCE_DIR}/directory.h
 	${CMAKE_CURRENT_SOURCE_DIR}/directory_iterator.h
 	PARENT_SCOPE

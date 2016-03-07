@@ -2,11 +2,14 @@
 
 #include <string>
 
+#include "utils/file_utils/file.h"
+#include "utils/file_utils/directory.h"
+
 std::string Path::makeAbsolute(const std::string& path) {
         return "";
 }
 
-Path::Path(const std::string& path) {
+Path::Path(const std::string& path) : path_(path) {
 
 }
 
@@ -19,7 +22,10 @@ Path& Path::makeAbsolute() {
 }
 
 bool Path::exists() const {
-        return true;
+      if(path_.empty())
+              return false;
+
+      return Directory::exists(path_) || File::exists(path_);
 }
 
 bool Path::isSymbolicLink() const {
@@ -31,9 +37,13 @@ bool Path::isDirectory() const {
 }
 
 std::string Path::toString() const {
-    return "";
+    return path_;
 }
 
 Path operator+(const Path& p1, const Path& p2) {
         return std::string("");
+}
+
+Path& Path::operator+=(const Path& path) {
+        return *this;
 }

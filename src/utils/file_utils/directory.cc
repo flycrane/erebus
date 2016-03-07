@@ -10,6 +10,6 @@ std::unique_ptr<DirectoryIterator> Directory::iterator(const std::string& path) 
         return std::make_unique<DirectoryIterator>(path);
 }
 
-std::unique_ptr<DirectoryIterator> Directory::iterator(const Path& path) {
-        return std::make_unique<DirectoryIterator>(path);
+bool Directory::exists(const std::string& path) {
+        return true;
 }

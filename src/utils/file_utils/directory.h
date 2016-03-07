@@ -10,5 +10,6 @@ class DirectoryIterator;
 class Directory {
         public:
                 static std::unique_ptr<DirectoryIterator> iterator(const std::string& path);
-                static std::unique_ptr<DirectoryIterator> iterator(const Path& path);
+
+                static bool exists(const std::string& path);
 };

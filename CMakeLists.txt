@@ -47,12 +47,21 @@ enable_testing()
 ##End of googletest
 ##############################################
 
+#provide boost headers
+add_definitions(-DBOOST_LOG_DYN_LINK)
+find_package(Boost COMPONENTS log log_setup thread date_time filesystem system REQUIRED)
+include_directories(${Boost_INCLUDE_DIR})
+
 include_directories(src)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Werror")
 
-add_subdirectory(src)
+set(TEST_LIBRARIES ${gtest_LIBRARIES} dl pthread ${Boost_LIBRARIES})
 
-add_executable(erebus ${SOURCE})
+add_subdirectory(src)
+add_subdirectory(test)
+
+add_executable(erebus ${SOURCE} ${HEADER} src/main.cc)
 
 target_link_libraries(erebus dl)
+target_link_libraries(erebus ${Boost_LIBRARIES} pthread)

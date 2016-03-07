@@ -17,6 +17,10 @@ class Path {
 	bool isDirectory() const;
 
 	std::string toString() const;
+    
+    Path& operator+=(const Path& path);
+  private:
+    std::string path_;
 };
 
 Path operator+(const Path& p1, const Path& p2);
