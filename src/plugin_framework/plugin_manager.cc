@@ -5,8 +5,6 @@
 
 #include "utils/file_utils/dynamic_library.h"
 #include "plugin_framework/plugin.h"
-#include "utils/file_utils/path.h"
-#include "utils/file_utils/directory.h"
 
 static bool isValid(const char* objectType, const RegisterParameters* params) {
         if(!objectType || !(*objectType))
@@ -43,7 +41,7 @@ DynamicLibrary* PluginManager::loadLibrary(const std::string& path, std::string&
         if(!d)
                 return NULL;
         
-        dynamicLibraryMap_[Path::makeAbsolute(path)] = std::shared_ptr<DynamicLibrary>(d);
+        //dynamicLibraryMap_[Path::makeAbsolute(path)] = std::shared_ptr<DynamicLibrary>(d);
         
         return d;
 }
@@ -100,9 +98,9 @@ int32_t PluginManager::loadAll(const std::string& pluginDirectory, InvokeService
 
         platformServices_.invokeServiceFunction = func;
 
-        Path dir_path(pluginDirectory);
-        if(!dir_path.exists() || !dir_path.isDirectory())
-                return -1;
+        //Path dir_path(pluginDirectory);
+        //if(!dir_path.exists() || !dir_path.isDirectory())
+        //        return -1;
 
         //Directory::Entry e;
         //Directory::Iterator di(dir_path);
@@ -120,29 +118,29 @@ int32_t PluginManager::loadAll(const std::string& pluginDirectory, InvokeService
 }
 
 uint32_t PluginManager::loadByPath(const std::string& pluginPath) {
-        Path path(pluginPath);
+        //Path path(pluginPath);
 
-        if(path.isSymbolicLink()) {
-                return -1;
-        }
+        //if(path.isSymbolicLink()) {
+        //        return -1;
+        //}
 
-        if(dynamicLibraryMap_.find(path.toString()) != dynamicLibraryMap_.end())
-                return -1;
+        //if(dynamicLibraryMap_.find(path.toString()) != dynamicLibraryMap_.end())
+        //        return -1;
 
-        path.makeAbsolute();
+        //path.makeAbsolute();
 
-        std::string errorString;
-        DynamicLibrary* d = loadLibrary(path.toString(), errorString);
-        if(!d)
-                return -1;
+        //std::string errorString;
+        //DynamicLibrary* d = loadLibrary(path.toString(), errorString);
+        //if(!d)
+        //        return -1;
 
-        InitPlugin initFunc = (InitPlugin)(d->getSymbol("initPlugin"));
-        if(!initFunc)
-                return -1;
+        //InitPlugin initFunc = (InitPlugin)(d->getSymbol("initPlugin"));
+        //if(!initFunc)
+        //        return -1;
 
-        int32_t res=initializePlugin(initFunc);
-        if(res<0)
-                return res;
+        //int32_t res=initializePlugin(initFunc);
+        //if(res<0)
+        //        return res;
 
         return 0;
 }

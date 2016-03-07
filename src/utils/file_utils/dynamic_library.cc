@@ -11,9 +11,7 @@ DynamicLibrary::DynamicLibrary(void* handle) : handle_(handle) {
 
 DynamicLibrary::~DynamicLibrary() {
         if(handle_) {
-                if(handle_) {
-                        ::dlclose(handle_);
-                }
+                dlclose(handle_);
         }
 }
 
@@ -44,6 +42,6 @@ void* DynamicLibrary::getSymbol(const std::string& symbol) {
      if(!handle_)
              return NULL;
 
-     return ::dlsym(handle_,symbol.c_str());
+     return dlsym(handle_,symbol.c_str());
 }
 
