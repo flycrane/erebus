@@ -1,19 +1,32 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 class DynamicLibrary {
   public:
-	static DynamicLibrary* load(const std::string& path, std::string& errorString);
+          /**
+           * Loads the dynamic library at the specified path.
+           * Throws if an error occurs.
+           */
+	static std::unique_ptr<DynamicLibrary> load(const std::string& path);
 
+    /**
+     * Constructor.
+     * Should not be used.
+     */
+	DynamicLibrary(void* handle);
 	DynamicLibrary(const DynamicLibrary&) = delete;
-	~DynamicLibrary();
 
+	~DynamicLibrary();
+    
+    /**
+     * Returns a symbol in the loaded library.
+     * Return null if the symbol does not exist.
+     */
 	void* getSymbol(const std::string& name);
 
   private:
-	DynamicLibrary(void* handle);
-
 	void* handle_;
 
 };

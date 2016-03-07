@@ -4,6 +4,9 @@
 #include <sstream>
 #include <iostream>
 #include <string>
+#include <memory>
+
+#include "exceptions/dynamic_link_library_exception.h"
 
 DynamicLibrary::DynamicLibrary(void* handle) : handle_(handle) {
 
@@ -15,32 +18,28 @@ DynamicLibrary::~DynamicLibrary() {
         }
 }
 
-DynamicLibrary* DynamicLibrary::load(const std::string& path, std::string& errorString) {
+std::unique_ptr<DynamicLibrary> DynamicLibrary::load(const std::string& path) {
         if(path.empty()) {
-                errorString="Empty path";
-                return NULL;
+                throw DynamicLinkLibraryException("Empty path");
         }
 
         void* handle=NULL;
 
-        handle=::dlopen(path.c_str(), RTLD_NOW);
+        handle=dlopen(path.c_str(), RTLD_NOW);
         if(!handle) {
                 std::string dlErrorString;
-                const char* reterrstr=::dlerror();
+                const char* reterrstr=dlerror();
                 if(reterrstr)
                         dlErrorString=reterrstr;
-                errorString =+ "Failded to load '"+path+"'";
-                if(dlErrorString.size()) {
-                        errorString += ": " + dlErrorString;
-                }
-                return NULL;
+                std::string errorString= "Failded to load '"+path+"'";
+                throw DynamicLinkLibraryException(errorString,dlErrorString);
         }
-        return new DynamicLibrary(handle);
+        return std::make_unique<DynamicLibrary>(handle);
 }
 
 void* DynamicLibrary::getSymbol(const std::string& symbol) {
      if(!handle_)
-             return NULL;
+             return nullptr;
 
      return dlsym(handle_,symbol.c_str());
 }

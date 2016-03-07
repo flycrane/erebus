@@ -36,14 +36,14 @@ int32_t PluginManager::registerObject(const char* objectType,
 }
 
 DynamicLibrary* PluginManager::loadLibrary(const std::string& path, std::string& errorString) {
-        DynamicLibrary* d = DynamicLibrary::load(path,errorString);
+         auto d = DynamicLibrary::load(path);
 
         if(!d)
                 return NULL;
         
         //dynamicLibraryMap_[Path::makeAbsolute(path)] = std::shared_ptr<DynamicLibrary>(d);
         
-        return d;
+        return d.get();
 }
 
 PluginManager& PluginManager::getInstance() {
