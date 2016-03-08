@@ -33,10 +33,6 @@ int32_t PluginManager::registerObject(const char* objectType,
 
         PluginManager& pm = getInstance();
 
-        PluginApiVersion v = pm.platformServices_.version;
-        if(v.major != params->version.major)
-                return -1;
-
         std::string key((const char*)objectType);
 
         if(pm.exactMatchMap_.find(key) != pm.exactMatchMap_.end()) {
@@ -48,12 +44,10 @@ int32_t PluginManager::registerObject(const char* objectType,
 }
 
 DynamicLibrary* PluginManager::loadLibrary(const std::string& path) {
-         auto d = DynamicLibrary::load(path);
-
-        if(!d)
-                return NULL;
+        auto d = DynamicLibrary::load(path);
         
-        //dynamicLibraryMap_[Path::makeAbsolute(path)] = std::shared_ptr<DynamicLibrary>(d);
+        boost::filesystem::path libPath(path);
+        dynamicLibraryMap_[boost::filesystem::canonical(libPath).string()] = std::move(d);
         
         return d.get();
 }
@@ -64,7 +58,7 @@ PluginManager& PluginManager::getInstance() {
         return instance;
 }
 
-PluginManager::PluginManager() : initializePlugin_(false) {
+PluginManager::PluginManager() {
         platformServices_.version.major=1;
         platformServices_.version.minor=0;
         platformServices_.invokeServiceFunction = NULL;
@@ -75,33 +69,28 @@ PluginManager::~PluginManager() {
         shutdown();
 }
 
-int32_t PluginManager::shutdown() {
-        int32_t result=0;
+void PluginManager::shutdown() {
         for(ExitFuncVec::iterator func=exitFuncVec_.begin(); func != exitFuncVec_.end(); ++func ) {
                 try {
-                        result = (*func)();
+                        (*func)();
                 }
                 catch(...) {
-                        result = -1;
                 }
         }
 
         dynamicLibraryMap_.clear();
         exactMatchMap_.clear();
         exitFuncVec_.clear();
-
-        return result;
 }
 
-int32_t PluginManager::initializePlugin(InitPlugin initFunc) {
+void PluginManager::initializePlugin(InitPlugin initFunc) {
         PluginManager& pm=getInstance();
 
         ExitPlugin exitFunc = initFunc(&pm.platformServices_);
         if(!exitFunc)
-                return -1;
+                throw PluginException("Failed to initialize plugin");
 
         pm.exitFuncVec_.push_back(exitFunc);
-        return 0;
 }
 
 void PluginManager::loadAll(const std::string& pluginDirectory) {
@@ -141,21 +130,16 @@ void PluginManager::loadByPath(const std::string& pluginPath) {
         if(dynamicLibraryMap_.find(plugin.string()) != dynamicLibraryMap_.end())
                 return;
 
-        DynamicLibrary* d = loadLibrary(plugin.string());
+        auto* d = loadLibrary(plugin.string());
 
-        InitPlugin initFunc = (InitPlugin)(d->getSymbol("initPlugin"));
+        auto initFunc = (InitPlugin)(d->getSymbol("initPlugin"));
         if(!initFunc)
                 throw DynamicLinkLibraryException("Is not a valid plugin");
 
-        int32_t res=initializePlugin(initFunc);
-        if(res<0)
-                throw PluginException("Failed to initialize plugin");
+       initializePlugin(initFunc);
 }
 
 void* PluginManager::createObject(const std::string& objectType, IObjectAdapter& adapter) {
-        if(objectType == std::string("*"))
-                        return NULL;
-
         ObjectParameters np;
         np.objectType = (const char*)objectType.c_str();
         np.platformServices = &platformServices_;
@@ -166,12 +150,12 @@ void* PluginManager::createObject(const std::string& objectType, IObjectAdapter&
                 if(object) {
                         if(rp.programmingLanguage == ProgrammingLanguage_C)
                                 object = adapter.adapt(object, rp.destroyObjectFunction);
-
+                        
                         return object;
                 }
         }
+        throw PluginException("Could not create object");
 
-        return NULL;
 }
 
 const PluginManager::RegistrationMap& PluginManager::getRegistrationMap() {

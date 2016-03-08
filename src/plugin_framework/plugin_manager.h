@@ -11,37 +11,37 @@
 #include "plugin_framework/iobject_adapter.h"
 
 class PluginManager {
-	using DynamicLibraryMap = std::map<std::string, std::shared_ptr<DynamicLibrary>>;
+	using DynamicLibraryMap = std::map<std::string, std::unique_ptr<DynamicLibrary>>;
 	using ExitFuncVec = std::vector<ExitPlugin>;
 	using RegistrationVec = std::vector<RegisterParameters>;
 
   public:
 	using RegistrationMap = std::map<std::string, RegisterParameters>;
+	
+	PluginManager(const PluginManager&) = delete;
+    ~PluginManager();
 
 	static PluginManager& getInstance();
-	static int32_t initializePlugin(InitPlugin initFunc);
+	static void initializePlugin(InitPlugin initFunc);
 	static int32_t registerObject(const char* objectType,
 	                              const RegisterParameters* params);
 
 	void loadAll(const std::string& pluginDirector);
 	void loadByPath(const std::string& pluginPath);
 
-	void* createObject(const std::string& objectType, IObjectAdapter& adapter);
+    void* createObject(const std::string& objectType, IObjectAdapter& adapter);
 	const RegistrationMap& getRegistrationMap();
 	PlatformServices& getPlatformServices();
 
-	int32_t shutdown();
+	void shutdown();
 
     void setPlatformService(int32_t (*platformServiceFunc)(const char* serviceName, void* params));
 
   private:
 	PluginManager();
-	PluginManager(const PluginManager&);
-	~PluginManager();
 
-	DynamicLibrary* loadLibrary(const std::string& path);
+    DynamicLibrary* loadLibrary(const std::string& path);
 
-	bool initializePlugin_;
 	PlatformServices platformServices_;
 	DynamicLibraryMap dynamicLibraryMap_;
 	ExitFuncVec exitFuncVec_;
