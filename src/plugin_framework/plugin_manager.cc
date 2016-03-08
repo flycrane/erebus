@@ -1,10 +1,17 @@
 #include "plugin_framework/plugin_manager.h"
 
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/range/iterator_range.hpp>
+
 #include <string>
 #include <stdint.h>
 
 #include "utils/file_utils/dynamic_library.h"
 #include "plugin_framework/plugin.h"
+
+#include "exceptions/dynamic_link_library_exception.h"
+#include "exceptions/plugin_exception.h"
 
 static bool isValid(const char* objectType, const RegisterParameters* params) {
         if(!objectType || !(*objectType))
@@ -13,6 +20,11 @@ static bool isValid(const char* objectType, const RegisterParameters* params) {
                 return false;
         return true;
 }
+
+void PluginManager::setPlatformService(int32_t (*platformServiceFunc)(const char* serviceName, void* params)) {
+        platformServices_.invokeServiceFunction = platformServiceFunc;
+}
+
 
 int32_t PluginManager::registerObject(const char* objectType,
                                        const RegisterParameters* params) {
@@ -35,7 +47,7 @@ int32_t PluginManager::registerObject(const char* objectType,
         return 0;
 }
 
-DynamicLibrary* PluginManager::loadLibrary(const std::string& path, std::string& errorString) {
+DynamicLibrary* PluginManager::loadLibrary(const std::string& path) {
          auto d = DynamicLibrary::load(path);
 
         if(!d)
@@ -92,57 +104,52 @@ int32_t PluginManager::initializePlugin(InitPlugin initFunc) {
         return 0;
 }
 
-int32_t PluginManager::loadAll(const std::string& pluginDirectory, InvokeService func) {
+void PluginManager::loadAll(const std::string& pluginDirectory) {
         if(pluginDirectory.empty())
-                return -1;
+                throw std::invalid_argument("Empty plugin directory name");
 
-        platformServices_.invokeServiceFunction = func;
+        boost::filesystem::path dirPath(pluginDirectory);
+        if(!boost::filesystem::exists(dirPath) || !boost::filesystem::is_directory(dirPath))
+                throw std::invalid_argument("Plugin directory does not exist");
+        
+        for(auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(dirPath))) {
+                if(boost::filesystem::is_directory(entry)) 
+                        continue;
 
-        //Path dir_path(pluginDirectory);
-        //if(!dir_path.exists() || !dir_path.isDirectory())
-        //        return -1;
+                if(entry.path().extension() != ".so")
+                        continue;
+                
+                auto absolutePath = boost::filesystem::canonical(entry);
+                try {
+                        loadByPath(absolutePath.string());
+                } catch(DynamicLinkLibraryException& de) {
 
-        //Directory::Entry e;
-        //Directory::Iterator di(dir_path);
-        //while(di.next(e)) {
-        //        Path full_path(dir_path+Path(e.path));
+                } catch(PluginException& pe) {
 
-        //        if(full_path.isDirectory())
-        //                continue;
-
-        //        std::string ext = full_path.getExtension();
-        //        if(ext != ".so")
-        //                continue;
-        //}
-        return 0;
+                }
+        }
 }
 
-uint32_t PluginManager::loadByPath(const std::string& pluginPath) {
-        //Path path(pluginPath);
+void PluginManager::loadByPath(const std::string& pluginPath) {
+        boost::filesystem::path plugin(pluginPath);
 
-        //if(path.isSymbolicLink()) {
-        //        return -1;
-        //}
+        if(!boost::filesystem::exists(plugin) || !boost::filesystem::is_regular_file(plugin))
+                throw std::invalid_argument("Plugin does not exist");
 
-        //if(dynamicLibraryMap_.find(path.toString()) != dynamicLibraryMap_.end())
-        //        return -1;
+        plugin = boost::filesystem::canonical(plugin);
+        
+        if(dynamicLibraryMap_.find(plugin.string()) != dynamicLibraryMap_.end())
+                return;
 
-        //path.makeAbsolute();
+        DynamicLibrary* d = loadLibrary(plugin.string());
 
-        //std::string errorString;
-        //DynamicLibrary* d = loadLibrary(path.toString(), errorString);
-        //if(!d)
-        //        return -1;
+        InitPlugin initFunc = (InitPlugin)(d->getSymbol("initPlugin"));
+        if(!initFunc)
+                throw DynamicLinkLibraryException("Is not a valid plugin");
 
-        //InitPlugin initFunc = (InitPlugin)(d->getSymbol("initPlugin"));
-        //if(!initFunc)
-        //        return -1;
-
-        //int32_t res=initializePlugin(initFunc);
-        //if(res<0)
-        //        return res;
-
-        return 0;
+        int32_t res=initializePlugin(initFunc);
+        if(res<0)
+                throw PluginException("Failed to initialize plugin");
 }
 
 void* PluginManager::createObject(const std::string& objectType, IObjectAdapter& adapter) {

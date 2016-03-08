@@ -2,6 +2,7 @@ add_subdirectory(plugin_framework)
 add_subdirectory(plugins)
 add_subdirectory(utils)
 add_subdirectory(exceptions)
+add_subdirectory(core)
 
 set(SOURCE
 	${SOURCE}

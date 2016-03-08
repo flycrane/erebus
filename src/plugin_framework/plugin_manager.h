@@ -23,8 +23,8 @@ class PluginManager {
 	static int32_t registerObject(const char* objectType,
 	                              const RegisterParameters* params);
 
-	int32_t loadAll(const std::string& pluginDirectory, InvokeService func=NULL);
-	uint32_t loadByPath(const std::string& pluginPath);
+	void loadAll(const std::string& pluginDirector);
+	void loadByPath(const std::string& pluginPath);
 
 	void* createObject(const std::string& objectType, IObjectAdapter& adapter);
 	const RegistrationMap& getRegistrationMap();
@@ -32,12 +32,14 @@ class PluginManager {
 
 	int32_t shutdown();
 
+    void setPlatformService(int32_t (*platformServiceFunc)(const char* serviceName, void* params));
+
   private:
 	PluginManager();
 	PluginManager(const PluginManager&);
 	~PluginManager();
 
-	DynamicLibrary* loadLibrary(const std::string& path, std::string& errorString);
+	DynamicLibrary* loadLibrary(const std::string& path);
 
 	bool initializePlugin_;
 	PlatformServices platformServices_;
