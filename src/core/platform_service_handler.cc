@@ -2,8 +2,12 @@
 
 #include <stdint.h>
 
+#include "logger.h"
+
 int32_t PlatformServiceHandler::invokePlatformService(const char* serviceName, void* params) {
-        return 0;
+        std::string name(serviceName);
+        Logger::log(name,LoggerChannel::DEFAULT,LogLevel::DEBUG);
+        return 1;
 }
 
 PlatformServiceHandler::PlatformServiceHandler() {

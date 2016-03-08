@@ -16,6 +16,6 @@ namespace {
 
 const std::string LoggerChannel::DEFAULT="default";
 
-void Logger::log(const std::string& message, const std::string& channel, LogLevel l) {
+void Logger::log(std::string message, std::string channel, LogLevel l) {
         std::cout<<message<<" ["<<channel<<"] "<<LogLevelToString(l)<<std::endl;
 }

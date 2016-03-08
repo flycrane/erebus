@@ -54,6 +54,7 @@ include_directories(${Boost_INCLUDE_DIR})
 
 include_directories(src)
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Werror")
 
 set(TEST_LIBRARIES ${gtest_LIBRARIES} dl pthread ${Boost_LIBRARIES})

@@ -6,9 +6,11 @@
 
 #include <string>
 #include <stdint.h>
+#include <sstream>
 
 #include "utils/file_utils/dynamic_library.h"
 #include "plugin_framework/plugin.h"
+#include "logger.h"
 
 #include "exceptions/dynamic_link_library_exception.h"
 #include "exceptions/plugin_exception.h"
@@ -45,11 +47,11 @@ int32_t PluginManager::registerObject(const char* objectType,
 
 DynamicLibrary* PluginManager::loadLibrary(const std::string& path) {
         auto d = DynamicLibrary::load(path);
-        
         boost::filesystem::path libPath(path);
+        auto* retPtr=d.get();
         dynamicLibraryMap_[boost::filesystem::canonical(libPath).string()] = std::move(d);
         
-        return d.get();
+        return retPtr;
 }
 
 PluginManager& PluginManager::getInstance() {

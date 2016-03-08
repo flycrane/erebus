@@ -17,6 +17,6 @@ class LoggerChannel {
 
 class Logger {
         public:
-                static void log(const std::string& message, const std::string& channel,LogLevel l);
+                static void log(std::string message, std::string channel,LogLevel l);
 
 };
