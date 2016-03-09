@@ -65,12 +65,15 @@ class Logger {
                 void addSink(const std::string& sinkName,boost::shared_ptr<boost::log::sinks::sink> sink);
                 boost::log::sinks::sink* getSink(const std::string& sinkName);
                 boost::shared_ptr<boost::log::sinks::sink> removeSink(const std::string& sinkName);
+                void disableSink(const std::string& sinkName);
+                void enableSink(const std::string& sinkName);
 
         private:
                 
                 Logger();
 
                 std::map<std::string,boost::shared_ptr<boost::log::sinks::sink>> sinks_;
+                std::map<std::string,boost::shared_ptr<boost::log::sinks::sink>> disabledSinks_;
 
                 logger_sev_channel logger_;
 

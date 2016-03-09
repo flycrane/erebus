@@ -150,6 +150,8 @@ void Logger::resetConsoleFilter() {
 void Logger::addSink(const std::string& sinkName,boost::shared_ptr<boost::log::sinks::sink> sink) {
         if(sinks_.find(sinkName) != sinks_.end())
                 return;
+        if(disabledSinks_.find(sinkName) != disabledSinks_.end())
+                return;
 
         sinks_[sinkName]=sink;
         boost::log::core::get()->add_sink(sink);
@@ -171,4 +173,24 @@ boost::shared_ptr<boost::log::sinks::sink> Logger::removeSink(const std::string&
     boost::log::core::get()->remove_sink(sink);
 
     return sink;
+}
+
+void Logger::disableSink(const std::string& sinkName) {
+       auto value=sinks_.find(sinkName);
+       if(value==sinks_.end())
+               return;
+       auto sink=value->second;
+       sinks_.erase(sinkName);
+       boost::log::core::get()->remove_sink(sink);
+       disabledSinks_[sinkName]=sink;
+}
+
+void Logger::enableSink(const std::string& sinkName) {
+        auto value=disabledSinks_.find(sinkName);
+        if(value==disabledSinks_.end())
+                return;
+        auto sink=value->second;
+        disabledSinks_.erase(sinkName);
+        boost::log::core::get()->add_sink(sink);
+        sinks_[sinkName]=sink;
 }
