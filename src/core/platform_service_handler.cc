@@ -6,7 +6,7 @@
 
 int32_t PlatformServiceHandler::invokePlatformService(const char* serviceName, void* params) {
         std::string name(serviceName);
-        Logger::log(name,LogChannel::DEFAULT,LogLevel::DEBUG);
+        //Logger::log(name,LogChannel::DEFAULT,LogLevel::DEBUG);
         return 1;
 }
 

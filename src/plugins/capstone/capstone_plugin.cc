@@ -7,12 +7,12 @@
 #include <logger.h>
 
 extern "C" int32_t Exit() {
-        Logger::log("destroy",LogChannel::DEFAULT,LogLevel::DEBUG);
+        //Logger::log("destroy",LogChannel::DEFAULT,LogLevel::DEBUG);
         return 0;
 }
 
 extern "C" ExitPlugin initPlugin(const PlatformServices* params) {
-        Logger::log("init",LogChannel::DEFAULT,LogLevel::DEBUG);
-        std::cout<<params->invokeServiceFunction("testservice",NULL)<<std::endl;
+        LOG_INFO(LogChannel::DEFAULT,"init"); 
+        params->invokeServiceFunction("testservice",NULL);
         return Exit;
 }
